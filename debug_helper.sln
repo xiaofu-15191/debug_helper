@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "debug_helper", "debug_helper\debug_helper.vcxproj", "{CBDB85EF-5625-4A69-B434-93D0EF013A92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release-Linux|x64 = Release-Linux|x64
+		Release-Windows|x64 = Release-Windows|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Debug|x64.ActiveCfg = Debug|x64
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Debug|x64.Build.0 = Debug|x64
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Release-Linux|x64.ActiveCfg = Release-Linux|x64
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Release-Linux|x64.Build.0 = Release-Linux|x64
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Release-Linux|x64.Deploy.0 = Release-Linux|x64
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Release-Windows|x64.ActiveCfg = Release-Windows|x64
+		{CBDB85EF-5625-4A69-B434-93D0EF013A92}.Release-Windows|x64.Build.0 = Release-Windows|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB1D21AA-A9DA-4315-81D2-479A200C279D}
+	EndGlobalSection
+EndGlobal

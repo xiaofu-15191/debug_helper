@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/debug_helper">
+        <file>icons/back-tb.png</file>
+        <file>icons/continue-tb.png</file>
+        <file>icons/forward-tb.png</file>
+        <file>icons/pause-tb.png</file>
+        <file>icons/restart-tb.png</file>
+        <file>icons/run-with-debugging-tb.png</file>
+        <file>icons/stepinto-tb.png</file>
+        <file>icons/stepout-tb.png</file>
+        <file>icons/stepover-tb.png</file>
+        <file>icons/stop-tb.png</file>
+        <file>icons/build-tb.png</file>
+        <file>icons/CE.png</file>
+        <file>icons/CS.png</file>
+    </qresource>
+</RCC>
