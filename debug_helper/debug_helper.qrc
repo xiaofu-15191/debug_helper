@@ -10,8 +10,11 @@
         <file>icons/stepout-tb.png</file>
         <file>icons/stepover-tb.png</file>
         <file>icons/stop-tb.png</file>
-        <file>icons/build-tb.png</file>
         <file>icons/CE.png</file>
         <file>icons/CS.png</file>
+        <file>icons/run-tb.png</file>
+        <file>icons/RE.png</file>
+        <file>icons/RS.png</file>
+        <file>icons/compile-tb.png</file>
     </qresource>
 </RCC>

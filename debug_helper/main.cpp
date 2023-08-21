@@ -1,4 +1,4 @@
-#include "debug_helper.h"
+﻿#include "debug_helper.h"
 #include<QtWidgets/QApplication>
 #include<string>
 int main(int argc,char* argv[])
