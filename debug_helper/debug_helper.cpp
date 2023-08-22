@@ -1,10 +1,18 @@
 ﻿#include "debug_helper.h"
 
-char folder_path[10000],program_path[10000],output_to[100],compile_information_char[100000],code[1100][1100],profile_path[10000];
+char folder_path[10000],program_path[10000],output_to[100],compile_information_char[100000],code[1100][1100],profile_path[10000],args[10000],temp_str[10000];
 int nxt[1010];
 
 Main_Window::Main_Window(QWidget* parent):QWidget(parent)
 {
+	path_viewer=new QTextBrowser(this);
+	path_viewer->hide();
+	folder_select_dialog=new QDialog(this);
+	folder_select_window=new QWidget(folder_select_dialog);
+	folder_path_edit=new QLineEdit(folder_select_window);
+	program_select_dialog=new QDialog(this);
+	program_select_window=new QWidget(program_select_dialog);
+	program_path_edit=new QLineEdit(program_select_window);
 	this->setFont(QFont("Fira Code, 微软雅黑"));
 	this->setWindowIcon(QIcon(":/debug_helper/icons/run-with-debugging-tb.png"));
 	this->setFixedSize(840,550);
@@ -64,7 +72,6 @@ void Main_Window::menubar_init()
 }
 void Main_Window::path_view()
 {
-	path_viewer=new QTextBrowser(this);
 	path_viewer->setFont(QFont("Fira Code"));
 	path_viewer->setText(QString(program_path));
 	path_viewer->resize(510,26);
@@ -75,12 +82,16 @@ void Main_Window::compile_error_view()
 {
 	QDialog* compile_error_dialog=new QDialog(this);
 	QWidget* compile_error_window=new QWidget(compile_error_dialog);
+	compile_error_dialog->setAttribute(Qt::WA_DeleteOnClose);
+	compile_error_window->setAttribute(Qt::WA_DeleteOnClose);
 	compile_error_dialog->resize(600,400);
 	compile_error_window->resize(600,400);
 	compile_error_dialog->setWindowTitle(QString("编译错误"));
 	QTextBrowser* error_text_browser=new QTextBrowser(compile_error_window);
+	error_text_browser->setAttribute(Qt::WA_DeleteOnClose);
 	error_text_browser->resize(600,400);
 	error_text_browser->setFont(QFont("Fira Code"));
+	memset(compile_information_char,0,sizeof(compile_information_char));
 	FILE* in=fopen(output_to,"r");
 	int sum=0;
 	while(!feof(in))
@@ -100,14 +111,12 @@ void Main_Window::folder_path_input()
 {
 	QByteArray tmp=folder_path_edit->displayText().toLatin1();
 	folder_path_size=strlen(tmp.data());
-	char temp[10000]="";
 	for(int i=0; i<strlen(tmp.data()); i++)
 	{
 		folder_path[i]=tmp.data()[i];
 		program_path[i]=folder_path[i];
 		output_to[i]=folder_path[i];
 		profile_path[i]=folder_path[i];
-		temp[i]=folder_path[i];
 	}
 	if(folder_path[folder_path_size-1]!='/'&&folder_path[folder_path_size-1]!='\\')
 	{
@@ -115,21 +124,21 @@ void Main_Window::folder_path_input()
 		program_path[folder_path_size]='/';
 		output_to[folder_path_size]='/';
 		profile_path[folder_path_size]='/';
-		temp[folder_path_size]='/';
 		folder_path_size++;
 	}
 	int profile_path_size=folder_path_size-1;
 	str_putin(profile_path,&profile_path_size,".debug_helper_profile");
 	strcat(output_to,"debug_helper_compile.txt");
+	int args_size=-1;
+	std::ifstream fin(profile_path);
+	fin>>args;
+	fin.close();
 }
 void Main_Window::select_folder()
 {
-	folder_select_dialog=new QDialog(this);
-	folder_select_window=new QWidget(folder_select_dialog);
 	folder_select_dialog->resize(600,50);
 	folder_select_window->resize(600,50);
 	folder_select_dialog->setWindowTitle(QString("输入工作目录："));
-	folder_path_edit=new QLineEdit(folder_select_window);
 	folder_path_edit->resize(550,25);
 	folder_path_edit->move(25,10);
 	folder_path_edit->setFont(QFont("Fira Code"));
@@ -150,12 +159,9 @@ void Main_Window::program_path_input()
 }
 void Main_Window::select_program()
 {
-	program_select_dialog=new QDialog(this);
-	program_select_window=new QWidget(program_select_dialog);
 	program_select_dialog->resize(550,40);
 	program_select_window->resize(550,40);
 	program_select_dialog->setWindowTitle(QString("输入Cpp文件名："));
-	program_path_edit=new QLineEdit(program_select_window);
 	program_path_edit->resize(500,25);
 	program_path_edit->move(25,10);
 	program_path_edit->setFont(QFont("Fira Code"));
@@ -206,12 +212,12 @@ void Main_Window::button_init()
 }
 void Main_Window::run()
 {
-	char tmp[10100]="";
+	memset(temp_str,0,sizeof(temp_str));
 	int cnt=-1;
 	for(int i=0;i<strlen(program_path)-4;i++)
-		tmp[++cnt]=program_path[i];
-	str_putin(tmp,&cnt," && pause");
-	int result=system(tmp);
+		temp_str[++cnt]=program_path[i];
+	str_putin(temp_str,&cnt," && pause");
+	int result=system(temp_str);
 	if(result!=0)
 		run_status=1;
 	else
@@ -221,47 +227,27 @@ void Main_Window::run()
 void Main_Window::compile()
 {
 	run_status=0;
-	char args[1000]="";
 	/*fgets(args,sizeof(args),profile);
 	if(strlen(args)<2)
 	{
 		str_putin(args,&args_size,"-g -std=c++14 -Wall");
 		fprintf(profile,"-g -std=c++14 -Wall\n");
 	}*/
-	int args_size=-1;
-	std::ifstream fin(profile_path);
-	fin>>args;
-	fin.close();
-	std::ofstream fout(profile_path);
-	if(strlen(args)<2)
-	{
-		char temp[10000]="";
-		int temp_size=-1;
-		#ifdef _WIN32
-			str_putin(temp,&temp_size,"del ");
-		#else
-			str_putin(temp,&temp_size,"rm ");
-		#endif
-		str_putin(temp,&temp_size,profile_path);
-		system(temp);
-		str_putin(args,&args_size,"-g -std=c++14 -Wall");
-		fout<<"-g -std=c++14 -Wall";
-	}
 	if(args[strlen(args)-1]=='\n')
 		args[strlen(args)-1]=' ';
-	char tmp[10000]="";
+	memset(temp_str,0,sizeof(temp_str));
 	int cnt=-1;
-	str_putin(tmp,&cnt,"g++ \"");
-	str_putin(tmp,&cnt,program_path);
-	str_putin(tmp,&cnt,"\" -o \"");
+	str_putin(temp_str,&cnt,"g++ \"");
+	str_putin(temp_str,&cnt,program_path);
+	str_putin(temp_str,&cnt,"\" -o \"");
 	for(int i=0;i<strlen(program_path)-4;i++)
-		tmp[++cnt]=program_path[i];
-	str_putin(tmp,&cnt,"\" ");
+		temp_str[++cnt]=program_path[i];
+	str_putin(temp_str,&cnt,"\" ");
 	//compile args
-	str_putin(tmp,&cnt,args);
-	str_putin(tmp,&cnt," 2> ");
-	str_putin(tmp,&cnt,output_to);
-	int result=system(tmp);
+	str_putin(temp_str,&cnt,args);
+	str_putin(temp_str,&cnt," 2> ");
+	str_putin(temp_str,&cnt,output_to);
+	int result=system(temp_str);
 	if(result!=0)
 	{
 		run_status=-1;
