@@ -1,6 +1,6 @@
 <UI version="4.0" >
  <class>debug_helperClass</class>
- <widget class="QWidget" name="debug_helperClass" >
+ <widget class="QMainWindow" name="debug_helperClass" >
   <property name="objectName" >
    <string notr="true">debug_helperClass</string>
   </property>
@@ -14,7 +14,10 @@
   </property>
   <property name="windowTitle" >
    <string>debug_helper</string>
-  </property>$centralwidget$
+  </property>  <widget class="QMenuBar" name="menuBar" />
+  <widget class="QToolBar" name="mainToolBar" />
+  <widget class="QWidget" name="centralWidget" />
+  <widget class="QStatusBar" name="statusBar" />
  </widget>
  <layoutDefault spacing="6" margin="11" />
  <pixmapfunction></pixmapfunction>

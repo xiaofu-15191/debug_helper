@@ -29,6 +29,9 @@
     <QtUic Include="debug_helper.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtMoc Include="debug_helper.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <ClCompile Include="debug_helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,8 +42,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="debug_helper.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>

@@ -2,9 +2,11 @@
 
 char folder_path[10000],program_path[10000],output_to[100],compile_information_char[100000],code[1100][1100],profile_path[10000],args[10000],temp_str[10000];
 int nxt[1010];
-
-Main_Window::Main_Window(QWidget* parent):QWidget(parent)
+debug_helper::debug_helper(QWidget* parent):QMainWindow(parent)
 {
+	const QSize MAIN_SIZE_MAX=QSize(16777215,16777215);
+	this->setMaximumSize(MAIN_SIZE_MAX);
+	this->setWindowFlag(Qt::WindowMaximizeButtonHint,true);
 	path_viewer=new QTextBrowser(this);
 	path_viewer->hide();
 	folder_select_dialog=new QDialog(this);
@@ -15,13 +17,14 @@ Main_Window::Main_Window(QWidget* parent):QWidget(parent)
 	program_path_edit=new QLineEdit(program_select_window);
 	this->setFont(QFont("Fira Code, 微软雅黑"));
 	this->setWindowIcon(QIcon(":/debug_helper/icons/run-with-debugging-tb.png"));
-	this->setFixedSize(840,550);
+	this->resize(840,550);
 	menubar_init();
 	select_folder();
 	status_view=new QLabel(this);
+	status_view->move(30,75);
 	button_init();
 }
-int Main_Window::str_find(char * source,const char *going_to_find)
+int debug_helper::str_find(char * source,const char *going_to_find)
 {
 	for(int i=0;i<strlen(source);i++)
 	{
@@ -38,39 +41,36 @@ int Main_Window::str_find(char * source,const char *going_to_find)
 	}
 	return 0x3f3f3f3f;
 }
-void Main_Window::str_putin(char *put_in,int *cnt,const char *source)
+void debug_helper::str_putin(char *put_in,int *cnt,const char *source)
 {
 	int source_size=strlen(source);
 	for(int i=0;i<source_size;i++)
 		put_in[++(*cnt)]=source[i];
 }
-void Main_Window::menubar_init()
+void debug_helper::menubar_init()
 {
-	Menubar=new QMenuBar(this);
-	select_program_action=new QAction("打开文件");
+	select_program_action=new QAction("打开文件",nullptr);
 	select_program_action->setShortcut(tr("Ctrl+O"));
-	connect(select_program_action,&QAction::triggered,this,&Main_Window::select_program);
-	select_folder_action=new QAction("打开文件夹");
+	connect(select_program_action,&QAction::triggered,this,&debug_helper::select_program);
+	select_folder_action=new QAction("打开文件夹",nullptr);
 	select_folder_action->setShortcut(tr("Ctrl+K,Ctrl+O"));
-	connect(select_folder_action,&QAction::triggered,this,&Main_Window::select_folder);
-	compile_action=new QAction("编译");
+	connect(select_folder_action,&QAction::triggered,this,&debug_helper::select_folder);
+	compile_action=new QAction("编译",nullptr);
 	compile_action->setShortcut(tr("F9"));
-	connect(compile_action,&QAction::triggered,this,&Main_Window::compile);
-	compile_and_run_action=new QAction("编译运行");
+	connect(compile_action,&QAction::triggered,this,&debug_helper::compile);
+	compile_and_run_action=new QAction("编译运行",nullptr);
 	compile_and_run_action->setShortcut(tr("F11"));
-	connect(compile_and_run_action,&QAction::triggered,this,&Main_Window::compile_and_run);
-	file_menu=new QMenu("文件",Menubar);
+	connect(compile_and_run_action,&QAction::triggered,this,&debug_helper::compile_and_run);
+	QMenu *file_menu=this->menuBar()->addMenu(tr("文件"));
 	file_menu->addAction(select_program_action);
 	file_menu->addAction(select_folder_action);
-	run_menu=new QMenu("运行",Menubar);
+	QMenu *run_menu=this->menuBar()->addMenu(tr("运行"));
 	run_menu->addAction(compile_action);
 	run_menu->addAction(compile_and_run_action);
-	Menubar->addMenu(file_menu);
-	Menubar->addMenu(run_menu);
-	Menubar->addSeparator();
-	Menubar->show();
+	this->menuBar()->addSeparator();
+	this->menuBar()->show();
 }
-void Main_Window::path_view()
+void debug_helper::path_view()
 {
 	path_viewer->setFont(QFont("Fira Code"));
 	path_viewer->setText(QString(program_path));
@@ -78,7 +78,7 @@ void Main_Window::path_view()
 	path_viewer->move(280,32);
 	path_viewer->show();
 }
-void Main_Window::compile_error_view()
+void debug_helper::compile_error_view()
 {
 	QDialog* compile_error_dialog=new QDialog(this);
 	QWidget* compile_error_window=new QWidget(compile_error_dialog);
@@ -107,7 +107,7 @@ void Main_Window::compile_error_view()
 	error_text_browser->show();
 	compile_error_dialog->show();
 }
-void Main_Window::folder_path_input()
+void debug_helper::folder_path_input()
 {
 	QByteArray tmp=folder_path_edit->displayText().toLatin1();
 	folder_path_size=strlen(tmp.data());
@@ -134,7 +134,7 @@ void Main_Window::folder_path_input()
 	fin>>args;
 	fin.close();
 }
-void Main_Window::select_folder()
+void debug_helper::select_folder()
 {
 	folder_select_dialog->resize(600,50);
 	folder_select_window->resize(600,50);
@@ -142,13 +142,13 @@ void Main_Window::select_folder()
 	folder_path_edit->resize(550,25);
 	folder_path_edit->move(25,10);
 	folder_path_edit->setFont(QFont("Fira Code"));
-	connect(folder_path_edit,&QLineEdit::returnPressed,this,&Main_Window::folder_path_input);
+	connect(folder_path_edit,&QLineEdit::returnPressed,this,&debug_helper::folder_path_input);
 	connect(folder_path_edit,&QLineEdit::returnPressed,folder_select_dialog,&QDialog::close);
-	connect(folder_path_edit,&QLineEdit::returnPressed,this,&Main_Window::path_view);
-	connect(folder_path_edit,&QLineEdit::returnPressed,this,&Main_Window::select_program);
+	connect(folder_path_edit,&QLineEdit::returnPressed,this,&debug_helper::path_view);
+	connect(folder_path_edit,&QLineEdit::returnPressed,this,&debug_helper::select_program);
 	folder_select_dialog->show();
 }
-void Main_Window::program_path_input()
+void debug_helper::program_path_input()
 {
 	memset(program_path,0,sizeof(program_path));
 	QByteArray tmp=program_path_edit->displayText().toLatin1();
@@ -157,7 +157,7 @@ void Main_Window::program_path_input()
 	for(int i=0; i<strlen(tmp.data()); i++)
 		program_path[i+folder_path_size]=tmp.data()[i];
 }
-void Main_Window::select_program()
+void debug_helper::select_program()
 {
 	program_select_dialog->resize(550,40);
 	program_select_window->resize(550,40);
@@ -168,13 +168,11 @@ void Main_Window::select_program()
 	connect(program_path_edit,&QLineEdit::returnPressed,this,&Main_Window::program_path_input);
 	connect(program_path_edit,&QLineEdit::returnPressed,program_select_dialog,&QDialog::close);
 	connect(program_path_edit,&QLineEdit::returnPressed,this,&Main_Window::path_view);
-	program_select_dialog->show();
 }
-void Main_Window::button_init()
+void debug_helper::button_init()
 {
 	//start next button
 	start_next_button=new QPushButton("开始/继续调试(F5)",this);
-	start_next_button->setIcon(QIcon(":/debug_helper/icons/continue-tb.png"));
 	start_next_button->resize(150,30);
 	start_next_button->move(30,490);
 	//step into button
@@ -202,15 +200,15 @@ void Main_Window::button_init()
 	compile_button->setIcon(QIcon(":/debug_helper/icons/compile-tb.png"));
 	compile_button->resize(115,30);
 	compile_button->move(30,30);
-	connect(compile_button,&QPushButton::clicked,this,&Main_Window::compile);
+	connect(compile_button,&QPushButton::clicked,this,&debug_helper::compile);
 	//compile and run button
 	compile_and_run_button=new QPushButton("编译运行(F11)",this);
 	compile_and_run_button->setIcon(QIcon(":/debug_helper/icons/run-tb.png"));
 	compile_and_run_button->resize(115,30);
 	compile_and_run_button->move(155,30);
-	connect(compile_and_run_button,&QPushButton::clicked,this,&Main_Window::compile_and_run);
+	connect(compile_and_run_button,&QPushButton::clicked,this,&debug_helper::compile_and_run);
 }
-void Main_Window::run()
+void debug_helper::run()
 {
 	memset(temp_str,0,sizeof(temp_str));
 	int cnt=-1;
@@ -224,7 +222,7 @@ void Main_Window::run()
 		run_status=2;
 	show_the_run_status();
 }
-void Main_Window::compile()
+void debug_helper::compile()
 {
 	run_status=0;
 	/*fgets(args,sizeof(args),profile);
@@ -257,13 +255,13 @@ void Main_Window::compile()
 	else
 		show_the_run_status();
 }
-void Main_Window::compile_and_run()
+void debug_helper::compile_and_run()
 {
 	compile();
 	if(run_status==0)
 		run();
 }
-void Main_Window::show_the_run_status()
+void debug_helper::show_the_run_status()
 {
 	if(run_status==-1)
 	{
@@ -285,6 +283,5 @@ void Main_Window::show_the_run_status()
 		status_view->setPixmap(QPixmap(QString(":/debug_helper/icons/RS.png")));
 		status_view->resize(84,18);
 	}
-	status_view->move(30,75);
 	status_view->show();
 }
