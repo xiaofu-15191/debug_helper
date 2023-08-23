@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-<<<<<<< HEAD
     <ProjectGuid>{CBDB85EF-5625-4A69-B434-93D0EF013A92}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.22621.0</WindowsTargetPlatformVersion>
@@ -23,21 +22,10 @@
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-<<<<<<< HEAD
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Linux|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>WSL_1_0</PlatformToolset>
-    <UseDebugLibraries>false</UseDebugLibraries>
-  </PropertyGroup>
-=======
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
->>>>>>> origin/dev
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
@@ -47,16 +35,7 @@
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
-<<<<<<< HEAD
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Windows|x64'" Label="QtSettings">
-    <QtInstall>6.4.3_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
-    <QtBuildConfig>release</QtBuildConfig>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Linux|x64'" Label="QtSettings">
-=======
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
->>>>>>> origin/dev
     <QtInstall>6.4.3_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
@@ -70,47 +49,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(QtMsBuild)\Qt.props" />
   </ImportGroup>
-<<<<<<< HEAD
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release-Windows|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(QtMsBuild)\Qt.props" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release-Linux|x64'">
-=======
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
->>>>>>> origin/dev
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(QtMsBuild)\Qt.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
   </PropertyGroup>
-<<<<<<< HEAD
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Windows|x64'">
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Linux|x64'">
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <AdditionalOptions>/analyze:stacksize 131072 %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
-    <Link>
-      <HeapReserveSize>134217728</HeapReserveSize>
-    </Link>
-  </ItemDefinitionGroup>
-=======
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
->>>>>>> origin/dev
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-<<<<<<< HEAD
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-=======
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
->>>>>>> origin/dev
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -118,11 +70,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-<<<<<<< HEAD
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Windows|x64'" Label="Configuration">
-=======
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">
->>>>>>> origin/dev
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -134,20 +82,6 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-<<<<<<< HEAD
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Linux|x64'" Label="Configuration">
-    <ClCompile>
-      <PositionIndependentCode>true</PositionIndependentCode>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <QtRcc Include="debug_helper.qrc" />
-    <QtUic Include="debug_helper.ui" />
-    <ClInclude Include="debug_helper.h" />
-    <ClCompile Include="debug_helper.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-=======
   <ItemGroup>
     <QtRcc Include="debug_helper.qrc" />
     <QtUic Include="debug_helper.ui" />
@@ -158,7 +92,6 @@
   <ItemGroup>
     <None Include="cpp.hint" />
   </ItemGroup>
->>>>>>> origin/dev
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />
