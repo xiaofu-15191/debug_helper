@@ -39,14 +39,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ClInclude Include="debug_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-=======
-<<<<<<< HEAD
-    <ClInclude Include="debug_helper.h">
-      <Filter>Header Files</Filter>
->>>>>>> 57c3aac952a4d2d6d2bc0b6da5b3fac19a3e336e
 </Project>
