@@ -16,5 +16,8 @@
         <file>icons/RE.png</file>
         <file>icons/RS.png</file>
         <file>icons/compile-tb.png</file>
+        <file>icons/diff-tb.png</file>
+        <file>icons/AC.png</file>
+        <file>icons/WA.png</file>
     </qresource>
 </RCC>
