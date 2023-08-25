@@ -4,12 +4,18 @@
 
 TEMPLATE = app
 TARGET = debug_helper
-DESTDIR = ../x64/Debug
-CONFIG += debug
+DESTDIR = ../x64/Release
+CONFIG += release
 LIBS += -L"."
 DEPENDPATH += .
 MOC_DIR += GeneratedFiles/$(ConfigurationName)
-OBJECTS_DIR += debug
+OBJECTS_DIR += release
 UI_DIR += GeneratedFiles
 RCC_DIR += GeneratedFiles
-include(debug_helper.pri)
+HEADERS += ./debug_helper.h
+SOURCES += ./debug_helper.cpp \
+    ./main.cpp
+FORMS += ./debug_helper.ui
+RESOURCES += debug_helper.qrc
+QT += core
+QT += Widget
