@@ -2,7 +2,7 @@
 
 char folder_path[10000],program_path[10000],error_output_to[100],compile_information_char[100000],code[1100][1100],profile_path[10000],args[10000],temp_str[10000],compare_1[10000],compare_2[10000],compare_path[10000],compare_information_char[100000];
 int nxt[1010];
-debug_helper::debug_helper(QWidget* parent):QMainWindow(parent)
+debug_helper::debug_helper(QWidget *parent):QMainWindow(parent)
 {
 	const QSize MAIN_SIZE_MAX=QSize(16777215,16777215),MAIN_SIZE_MIN=QSize(750,450);
 	this->setMaximumSize(MAIN_SIZE_MAX);
@@ -16,6 +16,10 @@ debug_helper::debug_helper(QWidget* parent):QMainWindow(parent)
 	program_select_dialog=new QDialog(this);
 	program_select_window=new QWidget(program_select_dialog);
 	program_path_edit=new QLineEdit(program_select_window);
+	breakpoint_dialog=new QDialog(this);
+	breakpoint_window=new QWidget(breakpoint_dialog);
+	breakpoint_input=new QTextEdit(breakpoint_window);
+	breakpoint_window_button=new QPushButton("确定",breakpoint_window);
 	this->setFont(QFont("Fira Code, 微软雅黑"));
 	this->setWindowIcon(QIcon(":/debug_helper/icons/run-with-debugging-tb.png"));
 	this->setWindowTitle(QString("Debug Helper"));
@@ -26,7 +30,7 @@ debug_helper::debug_helper(QWidget* parent):QMainWindow(parent)
 	status_view->move(375,75);
 	main_init();
 }
-int debug_helper::str_find(char * source,const char *going_to_find)
+int debug_helper::str_find(char *source,const char *going_to_find)
 {
 	for(int i=0;i<strlen(source);i++)
 	{
@@ -51,12 +55,14 @@ void debug_helper::str_putin(char *put_in,int *cnt,const char *source)
 }
 void debug_helper::menubar_init()
 {
+	//文件Actions
 	select_program_action=new QAction("打开文件",nullptr);
 	select_program_action->setShortcut(tr("Ctrl+O"));
 	connect(select_program_action,&QAction::triggered,this,&debug_helper::select_program);
 	select_folder_action=new QAction("打开文件夹",nullptr);
 	select_folder_action->setShortcut(tr("Ctrl+K,Ctrl+O"));
 	connect(select_folder_action,&QAction::triggered,this,&debug_helper::select_folder);
+	//运行Actions
 	compile_action=new QAction("编译",nullptr);
 	compile_action->setShortcut(tr("F9"));
 	connect(compile_action,&QAction::triggered,this,&debug_helper::compile);
@@ -66,6 +72,13 @@ void debug_helper::menubar_init()
 	compare_action=new QAction("对拍",nullptr);
 	compare_action->setShortcut(tr("Alt+F11"));
 	connect(compare_action,&QAction::triggered,this,&debug_helper::compare);
+	start_next_action=new QAction("开始/继续调试",nullptr);
+	start_next_action->setShortcut(tr("F5"));
+	connect(start_next_action,&QAction::triggered,this,&debug_helper::start_next_button_do);
+	stop_action=new QAction("停止调试",nullptr);
+	stop_action->setShortcut(tr("Shift+F5"));
+	connect(stop_action,&QAction::triggered,this,&debug_helper::stop_button_do);
+	//菜单栏
 	QMenu *file_menu=this->menuBar()->addMenu(tr("文件"));
 	file_menu->addAction(select_program_action);
 	file_menu->addAction(select_folder_action);
@@ -73,6 +86,8 @@ void debug_helper::menubar_init()
 	run_menu->addAction(compile_action);
 	run_menu->addAction(compile_and_run_action);
 	run_menu->addAction(compare_action);
+	run_menu->addAction(start_next_action);
+	run_menu->addAction(stop_action);
 	this->menuBar()->addSeparator();
 	this->menuBar()->show();
 }
@@ -80,25 +95,28 @@ void debug_helper::path_view()
 {
 	path_viewer->setFont(QFont("Fira Code"));
 	path_viewer->setText(QString(program_path));
-	path_viewer->resize(450,26);
-	path_viewer->move(280,32);
+		path_viewer->move(280,32);
+	if(run_status==-3)
+		path_viewer->resize(450,26);
+	else
+		path_viewer->resize(360,26);
 	path_viewer->show();
 }
 void debug_helper::compile_error_view()
 {
-	QDialog* compile_error_dialog=new QDialog(this);
-	QWidget* compile_error_window=new QWidget(compile_error_dialog);
+	QDialog *compile_error_dialog=new QDialog(this);
+	QWidget *compile_error_window=new QWidget(compile_error_dialog);
 	compile_error_dialog->setAttribute(Qt::WA_DeleteOnClose);
 	compile_error_window->setAttribute(Qt::WA_DeleteOnClose);
 	compile_error_dialog->resize(600,400);
 	compile_error_window->resize(600,400);
 	compile_error_dialog->setWindowTitle(QString("编译错误"));
-	QTextBrowser* error_text_browser=new QTextBrowser(compile_error_window);
+	QTextBrowser *error_text_browser=new QTextBrowser(compile_error_window);
 	error_text_browser->setAttribute(Qt::WA_DeleteOnClose);
 	error_text_browser->resize(600,400);
 	error_text_browser->setFont(QFont("Fira Code"));
 	memset(compile_information_char,0,sizeof(compile_information_char));
-	FILE* in=fopen(error_output_to,"r");
+	FILE *in=fopen(error_output_to,"r");
 	int sum=0;
 	while(!feof(in))
 	{
@@ -126,9 +144,9 @@ void debug_helper::compare()
 	memset(temp_str,0,sizeof(temp_str));
 	int temp_str_size=-1;
 	#if _WIN32
-		strcat(temp_str,"chcp 437 && fc \"");
+	strcat(temp_str,"chcp 437 && fc \"");
 	#else
-		strcat(temp_str,"diff \"");
+	strcat(temp_str,"diff \"");
 	#endif
 	strcat(temp_str,compare_1);
 	strcat(temp_str,"\" \"");
@@ -164,6 +182,71 @@ void debug_helper::compare()
 	compare_text_browser->show();
 	compare_dialog->show();
 }
+void debug_helper::start_next_button_do()
+{
+	if(debugging==0)
+	{
+		int cnt=-1;
+		memset(temp_str,0,sizeof(temp_str));
+		for(int i=0;i<strlen(program_path)-4;i++)
+			temp_str[++cnt]=program_path[i];
+		QStringList arguments;
+		arguments<<"\""<<temp_str<<"\"";
+		gdb->start(QString("gdb"),arguments);
+		debugging=1;
+		gdb->write("set logging file \"debug_helper_debugging_log.log\"");
+		gdb->write("set logging on");
+		breakpoint_select();
+		gdb->write("r");
+	}
+	else
+	{
+		command="continue";
+		#if _WIN32
+		command.append("\r\n");
+		#else
+		command.append("\n");
+		#endif
+		gdb->write(command.toLocal8Bit());
+	}
+}
+void debug_helper::stop_button_do()
+{
+	gdb->close();
+	debugging=0;
+}
+void debug_helper::breakpoint_select()
+{
+	breakpoint_dialog->setWindowTitle(QString("输入需要打断点的行号，用换行隔开，关闭时自动保存："));
+	breakpoint_dialog->resize(600,425);
+	breakpoint_window->resize(600,425);
+	breakpoint_input->resize(600,400);
+	breakpoint_input->setFont(QFont("Fira Code,微软雅黑"));
+	breakpoint_window_button->resize(600,25);
+	breakpoint_window_button->move(0,400);
+	breakpoint_window_button->setFont(QFont("Fira Code,微软雅黑"));
+	connect(breakpoint_window_button,&QPushButton::clicked,this,&debug_helper::breakpoint_putin_array);
+	connect(breakpoint_window_button,&QPushButton::clicked,breakpoint_dialog,&QWidget::close);
+	breakpoint_dialog->show();
+	breakpoint_window_button->show();
+}
+void debug_helper::breakpoint_putin_array()
+{
+	QString tmp=breakpoint_input->toPlainText();
+	char row[20]="b ";
+	int num=1;
+	for(auto i=tmp.begin();i!=tmp.end();i++)
+	{
+		if((*i).isDigit())
+			row[++num]=(*i).toLatin1();
+		else
+		{
+			if(num!=1)
+				gdb->write(row);
+			num=1;
+		}
+	}
+}
 void debug_helper::folder_path_input()
 {
 	QByteArray tmp=folder_path_edit->displayText().toLatin1();
@@ -176,21 +259,21 @@ void debug_helper::folder_path_input()
 		profile_path[i]=folder_path[i];
 		compare_path[i]=folder_path[i];
 		#if _WIN32
-			if(folder_path[i]=='/')
-			{
-				folder_path[i]='\\';
-				program_path[i]='\\';
-				error_output_to[i]='\\';
-				profile_path[i]='\\';
-				compare_path[i]='\\';
-			}
+		if(folder_path[i]=='/')
+		{
+			folder_path[i]='\\';
+			program_path[i]='\\';
+			error_output_to[i]='\\';
+			profile_path[i]='\\';
+			compare_path[i]='\\';
+		}
 		#endif
 	}
 	if(folder_path[folder_path_size-1]!='/'&&folder_path[folder_path_size-1]!='\\')
 	{
 		char temp='/';
 		#if _WIN32
-			temp='\\';
+		temp='\\';
 		#endif
 		folder_path[folder_path_size]=temp;
 		program_path[folder_path_size]=temp;
@@ -230,6 +313,8 @@ void debug_helper::program_path_input()
 		program_path[i]=folder_path[i];
 	for(int i=0; i<strlen(tmp.data()); i++)
 		program_path[i+folder_path_size]=tmp.data()[i];
+	memset(compare_1,0,sizeof(compare_1));
+	memset(compare_2,0,sizeof(compare_2));
 	for(int i=0;i<strlen(program_path)-4;i++)
 		compare_1[i]=program_path[i];
 	int compare_1_size=strlen(compare_1)-1;
@@ -252,15 +337,18 @@ void debug_helper::select_program()
 	connect(program_path_edit,&QLineEdit::returnPressed,this,&debug_helper::program_path_input);
 	connect(program_path_edit,&QLineEdit::returnPressed,program_select_dialog,&QDialog::close);
 	connect(program_path_edit,&QLineEdit::returnPressed,this,&debug_helper::path_view);
+	gdb->close();
 	program_select_dialog->show();
 }
 void debug_helper::main_init()
 {
+	gdb=new QProcess(this);
 	//start next button
 	start_next_button=new QPushButton("开始/继续调试(F5)",this);
 	start_next_button->setIcon(QIcon(":/debug_helper/icons/continue-tb.png"));
 	start_next_button->resize(150,30);
 	start_next_button->move(15,395);
+	connect(start_next_button,&QPushButton::clicked,this,&debug_helper::start_next_button_do);
 	//step into button
 	step_into_button=new QPushButton("单步进入(F8)",this);
 	step_into_button->setIcon(QIcon(":/debug_helper/icons/stepinto-tb.png"));
@@ -281,6 +369,7 @@ void debug_helper::main_init()
 	stop_button->setIcon(QIcon(":/debug_helper/icons/stop-tb.png"));
 	stop_button->resize(140,30);
 	stop_button->move(595,395);
+	connect(stop_button,&QPushButton::clicked,this,&debug_helper::stop_button_do);
 	//compile button
 	compile_button=new QPushButton("编译(F9)",this);
 	compile_button->setIcon(QIcon(":/debug_helper/icons/compile-tb.png"));
@@ -307,6 +396,12 @@ void debug_helper::main_init()
 	compare_edit_2->resize(285,28);
 	compare_edit_2->move(450,71);
 	connect(compare_button,&QPushButton::clicked,this,&debug_helper::compare);
+	//debug_viewer
+	debug_viewer=new QTextBrowser(this);
+	debug_viewer->setAttribute(Qt::WA_DeleteOnClose);
+	debug_viewer->resize(720,270);
+	debug_viewer->setFont(QFont("Fira Code,微软雅黑"));
+	debug_viewer->move(15,110);
 }
 void debug_helper::run()
 {

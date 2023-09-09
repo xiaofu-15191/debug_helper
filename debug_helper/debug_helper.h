@@ -13,11 +13,13 @@
 #include<QDialog>
 #include<QFont>
 #include<QFileDialog>
+#include<QTextEdit>
 #include<QString>
 #include<QTextBrowser>
 #include<QMenu>
 #include<QMenuBar>
 #include<QAction>
+#include<QProcess>
 #include<cstring>
 #include<string>
 #include<cstdlib>
@@ -26,14 +28,17 @@
 class debug_helper: public QMainWindow
 {
 public:
-	int folder_path_size=0,run_status;//run_status=-1表示CE,=0表示成功编译,=1表示RE,=2表示成功运行
-	QPushButton *start_next_button,*step_into_button,*step_out_button,*step_over_button,*stop_button,*compile_button,*compile_and_run_button,*compare_button;
-	QDialog *folder_select_dialog,*program_select_dialog;
-	QWidget *folder_select_window,*program_select_window;
+	int folder_path_size=0,run_status=-3,debugging=0;//run_status=-1表示CE,=0表示成功编译,=1表示RE,=2表示成功运行
+	QPushButton *start_next_button,*step_into_button,*step_out_button,*step_over_button,*stop_button,*compile_button,*compile_and_run_button,*compare_button,*breakpoint_window_button;
+	QDialog *folder_select_dialog,*program_select_dialog,*breakpoint_dialog;
+	QWidget *folder_select_window,*program_select_window,*breakpoint_window;
 	QLineEdit *folder_path_edit,*program_path_edit,*compare_edit_1,*compare_edit_2;
-	QTextBrowser *path_viewer;
+	QTextEdit *breakpoint_input;
+	QTextBrowser *path_viewer,*debug_viewer;
 	QLabel *status_view;
-	QAction *select_program_action,*select_folder_action,*compile_action,*compile_and_run_action,*compare_action;
+	QAction *select_program_action,*select_folder_action,*compile_action,*compile_and_run_action,*compare_action,*start_next_action,*stop_action;
+	QProcess *gdb;
+	QString command;
 	debug_helper(QWidget* parent=nullptr);
 	int str_find(char *,const char *);
 	void str_putin(char *,int *,const char *);
@@ -50,6 +55,13 @@ public:
 	void path_view();
 	void compile_error_view();
 	void compare();
+	void start_next_button_do();
+	void step_into_button_do();
+	void step_out_button_do();
+	void step_over_button_do();
+	void stop_button_do();
+	void breakpoint_select();
+	void breakpoint_putin_array();
 	Ui::debug_helperClass ui;
 
 private:
