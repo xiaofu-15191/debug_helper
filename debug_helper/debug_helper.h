@@ -43,16 +43,16 @@ public:
 	int str_find(char *,const char *);
 	void str_putin(char *,int *,const char *);
 	void menubar_init();
+	void main_init();
 	void select_folder();
 	void folder_path_input();
 	void select_program();
 	void program_path_input();
-	void main_init();
+	void path_view();
 	void run();
 	void compile();
 	void compile_and_run();
 	void show_the_run_status();
-	void path_view();
 	void compile_error_view();
 	void compare();
 	void start_next_button_do();
