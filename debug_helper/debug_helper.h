@@ -6,6 +6,7 @@
 #include<QtWidgets/QWidget>
 #include<QtWidgets/QMainWindow>
 #include<QPushbutton>
+#include<QCloseEvent>
 #include<QIcon>
 #include<QLineedit>
 #include<QLabel>
@@ -20,6 +21,7 @@
 #include<QMenuBar>
 #include<QAction>
 #include<QProcess>
+#include<QGridLayout>
 #include<cstring>
 #include<string>
 #include<cstdlib>
@@ -34,11 +36,11 @@ public:
 	QWidget *folder_select_window,*program_select_window,*breakpoint_window;
 	QLineEdit *folder_path_edit,*program_path_edit,*compare_edit_1,*compare_edit_2;
 	QTextEdit *breakpoint_input;
-	QTextBrowser *path_viewer,*debug_viewer;
+	QTextBrowser *debug_viewer;
 	QLabel *status_view;
-	QAction *select_program_action,*select_folder_action,*compile_action,*compile_and_run_action,*compare_action,*start_next_action,*stop_action;
+	QAction *select_program_action,*select_folder_action,*compile_action,*compile_and_run_action,*compare_action,*start_next_action,*step_into_action,*step_out_action,*step_over_action,*stop_action;
 	QProcess *gdb;
-	QString command;
+	QGridLayout *layout;
 	debug_helper(QWidget* parent=nullptr);
 	int str_find(char *,const char *);
 	void str_putin(char *,int *,const char *);

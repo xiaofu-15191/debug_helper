@@ -23,7 +23,7 @@ class Ui_debug_helperClass
 {
 public:
     QMenuBar *menuBar;
-    QToolBar *mainToolBar;
+    //QToolBar *mainToolBar;
     QWidget *centralWidget;
     QStatusBar *statusBar;
 
@@ -35,9 +35,9 @@ public:
         menuBar = new QMenuBar(debug_helperClass);
         menuBar->setObjectName("menuBar");
         debug_helperClass->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(debug_helperClass);
+        /*mainToolBar = new QToolBar(debug_helperClass);
         mainToolBar->setObjectName("mainToolBar");
-        debug_helperClass->addToolBar(mainToolBar);
+        debug_helperClass->addToolBar(mainToolBar);*/
         centralWidget = new QWidget(debug_helperClass);
         centralWidget->setObjectName("centralWidget");
         debug_helperClass->setCentralWidget(centralWidget);
