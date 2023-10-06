@@ -5,6 +5,7 @@
 #include "ui_debug_helper.h"
 #include<QtWidgets/QWidget>
 #include<QtWidgets/QMainWindow>
+#include<QSettings>
 #include<QPushbutton>
 #include<QCloseEvent>
 #include<QIcon>
@@ -22,6 +23,7 @@
 #include<QAction>
 #include<QProcess>
 #include<QGridLayout>
+#include<QFileDialog>
 #include<cstring>
 #include<string>
 #include<cstdlib>
@@ -38,7 +40,7 @@ public:
 	QTextEdit *breakpoint_input;
 	QTextBrowser *debug_viewer;
 	QLabel *status_view;
-	QAction *select_program_action,*select_folder_action,*compile_action,*compile_and_run_action,*compare_action,*start_next_action,*step_into_action,*step_out_action,*step_over_action,*stop_action;
+	QAction *open_file_action,*compile_action,*compile_and_run_action,*compare_action,*start_next_action,*step_into_action,*step_out_action,*step_over_action,*stop_action;
 	QProcess *gdb;
 	QGridLayout *layout;
 	debug_helper(QWidget* parent=nullptr);
@@ -46,10 +48,11 @@ public:
 	void str_putin(char *,int *,const char *);
 	void menubar_init();
 	void main_init();
-	void select_folder();
+	/*void select_folder();
 	void folder_path_input();
 	void select_program();
-	void program_path_input();
+	void program_path_input();*/
+	void open_file();
 	void path_view();
 	void run();
 	void compile();
@@ -64,6 +67,7 @@ public:
 	void stop_button_do();
 	void breakpoint_select();
 	void breakpoint_putin_array();
+	void set_color();
 	Ui::debug_helperClass ui;
 
 private:

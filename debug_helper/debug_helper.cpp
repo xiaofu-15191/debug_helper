@@ -25,11 +25,11 @@ debug_helper::debug_helper(QWidget *parent):QMainWindow(parent)
 	this->setWindowTitle(QString("Debug Helper"));
 	this->resize(750,450);
 	menubar_init();
-	select_folder();
 	status_view=new QLabel(this);
 	status_view->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	//status_view->move(375,75);
 	main_init();
+	open_file();
 	ui.centralWidget->setLayout(layout);
 }
 //基本字符串函数
@@ -60,12 +60,9 @@ void debug_helper::str_putin(char *put_in,int *cnt,const char *source)
 void debug_helper::menubar_init()
 {
 	//文件Actions
-	select_program_action=new QAction("打开文件",nullptr);
-	select_program_action->setShortcut(tr("Ctrl+O"));
-	connect(select_program_action,&QAction::triggered,this,&debug_helper::select_program);
-	select_folder_action=new QAction("打开文件夹",nullptr);
-	select_folder_action->setShortcut(tr("Ctrl+K,Ctrl+O"));
-	connect(select_folder_action,&QAction::triggered,this,&debug_helper::select_folder);
+	open_file_action=new QAction("打开文件",nullptr);
+	open_file_action->setShortcut(tr("Ctrl+O"));
+	connect(open_file_action,&QAction::triggered,this,&debug_helper::open_file);
 	//运行Actions
 	compile_action=new QAction("编译",nullptr);
 	compile_action->setShortcut(tr("F9"));
@@ -93,8 +90,7 @@ void debug_helper::menubar_init()
 	connect(stop_action,&QAction::triggered,this,&debug_helper::stop_button_do);
 	//菜单栏
 	QMenu *file_menu=this->menuBar()->addMenu(tr("文件"));
-	file_menu->addAction(select_program_action);
-	file_menu->addAction(select_folder_action);
+	file_menu->addAction(open_file_action);
 	QMenu *run_menu=this->menuBar()->addMenu(tr("运行"));
 	run_menu->addAction(compile_action);
 	run_menu->addAction(compile_and_run_action);
@@ -114,83 +110,53 @@ void debug_helper::main_init()
 	start_next_button=new QPushButton("开始/继续调试(F5)",this);
 	start_next_button->setIcon(QIcon(":/debug_helper/icons/continue-tb.png"));
 	start_next_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//start_next_button->setFlat(true);
-	/*start_next_button->resize(150,30);
-	start_next_button->move(15,395);*/
 	connect(start_next_button,&QPushButton::clicked,this,&debug_helper::start_next_button_do);
 	//step out button
 	step_out_button=new QPushButton("单步跳出(F6)",this);
 	step_out_button->setIcon(QIcon(":/debug_helper/icons/stepout-tb.png"));
 	step_out_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//step_out_button->setFlat(true);
-	/*step_out_button->resize(125,30);
-	step_out_button->move(180,395);*/
 	connect(step_out_button,&QPushButton::clicked,this,&debug_helper::step_out_button_do);
 	//step over button
 	step_over_button=new QPushButton("逐过程(F7)",this);
 	step_over_button->setIcon(QIcon(":/debug_helper/icons/stepover-tb.png"));
 	step_over_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//step_over_button->setFlat(true);
-	/*step_over_button->resize(120,30);
-	step_over_button->move(320,395);*/
 	connect(step_over_button,&QPushButton::clicked,this,&debug_helper::step_over_button_do);
 	//step into button
 	step_into_button=new QPushButton("单步进入(F8)",this);
 	step_into_button->setIcon(QIcon(":/debug_helper/icons/stepinto-tb.png"));
 	step_into_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//step_into_button->setFlat(true);
-	/*step_into_button->resize(125,30);
-	step_into_button->move(455,395);*/
 	connect(step_into_button,&QPushButton::clicked,this,&debug_helper::step_into_button_do);
 	//stop button
 	stop_button=new QPushButton("停止调试(Shift+F5)",this);
 	stop_button->setIcon(QIcon(":/debug_helper/icons/stop-tb.png"));
 	stop_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//stop_button->setFlat(true);
-	/*stop_button->resize(140,30);
-	stop_button->move(595,395);*/
 	connect(stop_button,&QPushButton::clicked,this,&debug_helper::stop_button_do);
 	//compile button
 	compile_button=new QPushButton("编译(F9)",this);
 	compile_button->setIcon(QIcon(":/debug_helper/icons/compile-tb.png"));
 	compile_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//compile_button->setFlat(true);
-	/*compile_button->resize(115,30);
-	compile_button->move(15,30);*/
 	connect(compile_button,&QPushButton::clicked,this,&debug_helper::compile);
 	//compile and run button
 	compile_and_run_button=new QPushButton("编译运行(F11)",this);
 	compile_and_run_button->setIcon(QIcon(":/debug_helper/icons/run-tb.png"));
 	compile_and_run_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//compile_and_run_button->setFlat(true);
-	/*compile_and_run_button->resize(115,30);
-	compile_and_run_button->move(145,30);*/
 	connect(compile_and_run_button,&QPushButton::clicked,this,&debug_helper::compile_and_run);
 	//compares
 	compare_button=new QPushButton("对拍(Alt+F11)",this);
 	compare_button->setIcon(QIcon(":/debug_helper/icons/diff-tb.png"));
 	compare_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//compare_button->setFlat(true);
-	/*compare_button->resize(140,30);
-	compare_button->move(305,70);*/
 	compare_edit_1=new QLineEdit(this);
 	compare_edit_1->setFont(QFont("Fira Code"));
 	compare_edit_1->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	/*compare_edit_1->resize(285,28);
-	compare_edit_1->move(15,71);*/
 	compare_edit_2=new QLineEdit(this);
 	compare_edit_2->setFont(QFont("Fira Code"));
 	compare_edit_2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	/*compare_edit_2->resize(285,28);
-	compare_edit_2->move(450,71);*/
 	connect(compare_button,&QPushButton::clicked,this,&debug_helper::compare);
 	//debug_viewer
 	debug_viewer=new QTextBrowser(this);
 	debug_viewer->setAttribute(Qt::WA_DeleteOnClose);
 	debug_viewer->setFont(QFont("Fira Code,微软雅黑"));
 	debug_viewer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	/*debug_viewer->resize(720,270);*/
-	/*debug_viewer->move(15,110);*/
 	//layout settings
 	layout->addWidget(compile_button,0,0,1,1);
 	layout->addWidget(compile_and_run_button,0,1,1,1);
@@ -219,30 +185,31 @@ void debug_helper::main_init()
 	layout->setRowStretch(4,2);
 	layout->setRowStretch(5,2);
 	layout->setRowStretch(6,1);
-	//this->setLayout(layout);
 }
-//打开文件夹
-void debug_helper::select_folder()
+void debug_helper::set_color()
 {
-	folder_select_dialog->resize(600,50);
-	folder_select_window->resize(600,50);
-	folder_select_dialog->setWindowTitle(QString("输入工作目录："));
-	folder_path_edit->resize(550,25);
-	folder_path_edit->move(25,10);
-	folder_path_edit->setFont(QFont("Fira Code"));
-	connect(folder_path_edit,&QLineEdit::returnPressed,this,&debug_helper::folder_path_input);
-	connect(folder_path_edit,&QLineEdit::returnPressed,folder_select_dialog,&QDialog::close);
-	connect(folder_path_edit,&QLineEdit::returnPressed,this,&debug_helper::path_view);
-	connect(folder_path_edit,&QLineEdit::returnPressed,this,&debug_helper::select_program);
-	folder_select_dialog->show();
+	#ifdef Q_OS_WIN
+	QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
+	if(settings.value("AppsUseLightTheme")==0){
+		// 深色主题
+		this->setStyleSheet("color:black");
+	}
+	else {
+		// 浅色主题
+		this->setStyleSheet("color:white");
+	}
+	#endif
 }
-void debug_helper::folder_path_input()
+//打开文件
+void debug_helper::open_file()
 {
-	QByteArray tmp=folder_path_edit->displayText().toLatin1();
-	folder_path_size=strlen(tmp.data());
-	for(int i=0; i<strlen(tmp.data()); i++)
+	QString input_path=QFileDialog::getOpenFileName(nullptr,"打开文件","~/","*.cpp");
+	if(input_path.size()<5) return;
+	folder_path_size=input_path.size()-1;
+	while(input_path[folder_path_size].toLatin1()!='/'&&input_path[folder_path_size].toLatin1()!='\\') folder_path_size--;
+	for(int i=0; i<folder_path_size; i++)
 	{
-		folder_path[i]=tmp.data()[i];
+		folder_path[i]=input_path[i].toLatin1();
 		program_path[i]=folder_path[i];
 		error_output_to[i]=folder_path[i];
 		profile_path[i]=folder_path[i];
@@ -279,30 +246,9 @@ void debug_helper::folder_path_input()
 	std::ifstream fin(profile_path);
 	fin>>args;
 	fin.close();
-}
-//打开程序
-void debug_helper::select_program()
-{
-	program_select_dialog->resize(550,40);
-	program_select_window->resize(550,40);
-	program_select_dialog->setWindowTitle(QString("输入Cpp文件名："));
-	program_path_edit->resize(500,25);
-	program_path_edit->move(25,10);
-	program_path_edit->setFont(QFont("Fira Code"));
-	connect(program_path_edit,&QLineEdit::returnPressed,this,&debug_helper::program_path_input);
-	connect(program_path_edit,&QLineEdit::returnPressed,program_select_dialog,&QDialog::close);
-	connect(program_path_edit,&QLineEdit::returnPressed,this,&debug_helper::path_view);
-	gdb->close();
-	program_select_dialog->show();
-}
-void debug_helper::program_path_input()
-{
 	memset(program_path,0,sizeof(program_path));
-	QByteArray tmp=program_path_edit->displayText().toLatin1();
-	for(int i=0; i<folder_path_size; i++)
-		program_path[i]=folder_path[i];
-	for(int i=0; i<strlen(tmp.data()); i++)
-		program_path[i+folder_path_size]=tmp.data()[i];
+	for(int i=0;i<input_path.size(); i++)
+		program_path[i]=input_path[i].toLatin1();
 	memset(compare_1,0,sizeof(compare_1));
 	memset(compare_2,0,sizeof(compare_2));
 	for(int i=0;i<strlen(program_path)-4;i++)
@@ -326,7 +272,7 @@ void debug_helper::path_view()
 		path_viewer->resize(450,26);
 	else
 		path_viewer->resize(360,26);*/
-	//path_viewer->show();
+		//path_viewer->show();
 }
 //编译运行
 void debug_helper::run()
