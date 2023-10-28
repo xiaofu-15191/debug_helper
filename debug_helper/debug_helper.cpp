@@ -286,7 +286,15 @@ void debug_helper::open_file()
 }
 void debug_helper::path_view()
 {
+	//path_viewer->setFont(QFont("Fira Code"));
+	//path_viewer->setText(QString(program_path));
 	this->setWindowTitle(QString(program_path)+" - Debug Helper");
+	//path_viewer->move(280,32);
+	/*if(run_status==-3)
+		path_viewer->resize(450,26);
+	else
+		path_viewer->resize(360,26);*/
+		//path_viewer->show();
 }
 //编译运行
 void debug_helper::run()
