@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/debug_helper">
+        <file>icons/back-tb.png</file>
+        <file>icons/continue-tb.png</file>
+        <file>icons/forward-tb.png</file>
+        <file>icons/pause-tb.png</file>
+        <file>icons/restart-tb.png</file>
+        <file>icons/run-with-debugging-tb.png</file>
+        <file>icons/stepinto-tb.png</file>
+        <file>icons/stepout-tb.png</file>
+        <file>icons/stepover-tb.png</file>
+        <file>icons/stop-tb.png</file>
+        <file>icons/CE.png</file>
+        <file>icons/CS.png</file>
+        <file>icons/RE.png</file>
+        <file>icons/RS.png</file>
+        <file>icons/compile-tb.png</file>
+        <file>icons/diff-tb.png</file>
+        <file>icons/AC.png</file>
+        <file>icons/WA.png</file>
+        <file>icons/compile-run-tb.png</file>
+        <file>icons/run-tb.png</file>
+        <file>icons/WTC-GOD.png</file>
+    </qresource>
+</RCC>
