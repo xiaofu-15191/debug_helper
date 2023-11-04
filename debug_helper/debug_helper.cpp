@@ -25,18 +25,10 @@ debug_helper::debug_helper(QWidget *parent):QMainWindow(parent)
 	this->setWindowTitle(QString("Debug Helper"));
 	this->resize(750,450);
 	menubar_init();
-	WTC_pic=new QLabel(this);
-	WTC_pic->setPixmap(QPixmap(QString(":/debug_helper/icons/WTC-GOD.png")));
-	WTC_pic->setAlignment(Qt::AlignHCenter);
-	WTC_words=new QLabel(this);
-	WTC_words->setText(QString("WTC天神保佑AC!"));
-	//WTC_words->setAlignment(Qt::AlignHCenter);
-	//WTC_pic->setScaledContents(true);
-	//WTC_pic->setText(QString("WTC天神保佑AC!"));
-	//WTC_pic->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//status_view=new QLabel(this);
-	//status_view->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-	//status_view->move(375,75);
+	tip_1=new QLabel(this);
+	tip_1->setText(QString("下方是你程序的输出文件："));
+	tip_2=new QLabel(this);
+	tip_2->setText(QString("下方是对应的答案文件："));
 	main_init();
 	open_file();
 	ui.centralWidget->setLayout(layout);
@@ -121,7 +113,7 @@ void debug_helper::main_init()
 	gdb=new QProcess(this);
 	//start next button
 	start_next_button=new QPushButton("开始/继续调试(F5)",this);
-	start_next_button->setIcon(QIcon(":/debug_helper/icons/continue-tb.png"));
+	start_next_button->setIcon(QIcon(":/debug_helper/icons/run-with-debugging-tb.png"));
 	start_next_button->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	connect(start_next_button,&QPushButton::clicked,this,&debug_helper::start_next_button_do);
 	//step out button
@@ -177,11 +169,10 @@ void debug_helper::main_init()
 	debug_viewer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 	//layout settings
 	layout->addWidget(compile_button,0,0,1,1);
-	layout->addWidget(WTC_pic,0,1,1,1);
+	layout->addWidget(tip_1,0,1,1,1);
 	layout->addWidget(run_button,0,2,1,1);
-	layout->addWidget(WTC_words,0,3,1,1);
+	layout->addWidget(tip_2,0,3,1,1);
 	layout->addWidget(compile_and_run_button,0,4,1,1);
-	//layout->addWidget(status_view,0,4,1,1);
 	layout->addWidget(compare_edit_1,1,0,1,2);
 	layout->addWidget(compare_button,1,2);
 	layout->addWidget(compare_edit_2,1,3,1,2);
@@ -269,7 +260,13 @@ void debug_helper::open_file()
 	fin.close();
 	memset(program_path,0,sizeof(program_path));
 	for(int i=0;i<input_path.size(); i++)
+	{
 		program_path[i]=input_path[i].toLatin1();
+		#if _WIN32
+		if(program_path[i]=='/')
+			program_path[i]='\\';
+		#endif
+	}
 	memset(compare_1,0,sizeof(compare_1));
 	memset(compare_2,0,sizeof(compare_2));
 	for(int i=0;i<strlen(program_path)-4;i++)
@@ -301,6 +298,9 @@ void debug_helper::run()
 {
 	memset(temp_str,0,sizeof(temp_str));
 	int cnt=-1;
+	str_putin(temp_str,&cnt,"cd ");
+	str_putin(temp_str,&cnt,folder_path);
+	str_putin(temp_str,&cnt," && ");
 	for(int i=0;i<strlen(program_path)-4;i++)
 		temp_str[++cnt]=program_path[i];
 	strcat(temp_str," && pause");

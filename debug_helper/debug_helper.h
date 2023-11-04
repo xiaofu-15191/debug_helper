@@ -39,7 +39,7 @@ public:
 	QLineEdit *folder_path_edit,*program_path_edit,*compare_edit_1,*compare_edit_2;
 	QTextEdit *breakpoint_input;
 	QTextBrowser *debug_viewer;
-	QLabel *WTC_pic,*WTC_words;
+	QLabel *tip_1,*tip_2;
 	QAction *open_file_action,*compile_action,*run_action,*compile_and_run_action,*compare_action,*start_next_action,*step_into_action,*step_out_action,*step_over_action,*stop_action;
 	QProcess *gdb;
 	QGridLayout *layout;
